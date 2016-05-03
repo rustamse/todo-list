@@ -2,21 +2,23 @@
     <div class="checkbox">
         <label>
             <div class="col-xs-6">
-                <input type="checkbox" id="{{ task.id }}" {% if task.done %}checked disabled {% endif %}><label>{{ task.title }}</label>
+                <input type="checkbox" id="{{ task.id }}" {% if task.done %}checked disabled {% endif %}>
+                <label>{{ task.title }}</label>
             </div>
 
             <div class="input-group col-xs-6 addSubtask">
-                    <input type="text" class="form-control taskdescr" name="taskdescr" placeholder="Введите описание задачи...">
-                    <span class="input-group-btn">
-                        <button class="btn btn-primary add-btn" type="button" name="add-btn">Добавить новую задачу</button>
-                    </span>
-                </div>
+                <input type="text" class="form-control taskdescr" name="taskdescr" placeholder="Введите описание подзадачи...">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary add-btn" type="button" name="add-btn">Добавить подзадачу</button>
+                </span>
+            </div>
             <ul class="list-unstyled">
                 {% for subtask in list %}
                 <li>
                     <div class="checkbox">
                         <label>
-                            <input type="checkbox" id="{{ subtask.id }}" {% if subtask.done %}checked disabled {% endif %}><label>{{ subtask.title }}</label>
+                            <input type="checkbox" id="{{ subtask.id }}" {% if subtask.done %}checked disabled {% endif %}>
+                            <label>{{ subtask.title }}</label>
                         </label>
                     </div>
                 </li>

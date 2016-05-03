@@ -13,22 +13,21 @@
             text-decoration: line-through;
             color: lightgray;
         }
-
+        
         .addSubtask {
             visibility: hidden;
         }
-
+        
         li:hover .addSubtask {
             visibility: visible;
         }
-
+        
         li.done:hover .addSubtask {
             visibility: hidden;
         }
-
+        
         li:hover {
-            background: #eee;
-            border-radius: 5px;
+            color: blue;
         }
     </style>
 </head>
@@ -41,7 +40,7 @@
                     <img src="static/logo.png" class="img-responsive" alt="To-do list logo">
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-8 col-lg-9">
-                    <h2>Иерархичный to-do list</h2>
+                    <h2>Иерархичный список задач</h2>
                 </div>
             </div>
         </div>
@@ -65,28 +64,6 @@
                     </span>
                 </div>
             </div>
-
-            <p class="col-xs-12">Examples of checkboxes: </p>
-
-            <div class="col-xs-12">
-                <ul class="list-unstyled col-xs-12">
-                    <li>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" id="7676" checked disabled>checked disabled example
-                            </label>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" id="7677">simple example
-                            </label>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
         </div>
     </div>
     <script type="text/javascript">
@@ -101,8 +78,7 @@
                     descr = parent.find(".taskdescr").val();
                     parent_id = parent.attr('data-task-id');
                     parent_element = parent.find('ul');
-                }
-                else {
+                } else {
                     descr = $('#taskdescr').val();
                 }
 
@@ -113,12 +89,65 @@
 
                 var str = '{"Method": "Add", "Param": { "task_title": "' + descr + '", "parent": ' + parent_id + ' } }';
 
-
-
+                
                 $.post("http://todo-list.ru/ajax/", str, function (data) {
                     if (data.Data !== null && data.Data.task_id !== null) {
                         var tid = data.Data.task_id;
-                        parent_element.append('<li data-task-id="' + tid + '"><div class="checkbox"><label><input type="checkbox" id="' + tid + '">' + descr + '</label></div></li>');
+                        if(!parent_id) {
+                            
+                            parent_element.append(
+                                '<li data-task-id="' + tid + '">' + 
+                                    '<div class="checkbox">' + 
+                                        '<label>' + 
+                                            '<div class="col-xs-6">' +
+                                                '<input type="checkbox" id="' + tid + '">' +  
+                                                '<label>' + descr + '</label>' +
+                                            '</div>' + 
+                                            '<div class="input-group col-xs-6 addSubtask">' + 
+                                                '<input type = "text" class="form-control taskdescr" name="taskdescr" placeholder="Введите описание подзадачи..." >' + 
+                                                '<span class="input-group-btn">' + 
+                                                    '<button class="btn btn-primary add-btn" type = "button" name="add-btn">Добавить подзадачу</button>' + 
+                                                '</span>' + 
+                                            '</div>' + 
+                                            '<ul class="list-unstyled">' +                                                
+                                            '</ul>' + 
+                                        '</label>' + 
+                                    '</div>' + 
+                                '</li>'
+                            );
+                            
+                        } else {
+                            parent_element.append(
+                                '<li>' + 
+                                    '<div class="checkbox">' + 
+                                        '<label>' +
+                                            '<input type="checkbox" id="' + tid + '">' +
+                                            '<label>' + descr + '</label>' +
+                                        '</label>' + 
+                                    '</div>' + 
+                                '</li>'
+                            );
+                            
+                        }
+                                                
+                        var el = $('#' + tid);
+                            el.click(function () {
+                                if ($(this).is(':checked')) {
+                                    $(this).prop('disabled', true);
+
+                                    var str = '{"Method": "Check", "Param": { "task_id": "' + this.id + '" } }';
+
+                                    $($(this).closest('li')[0]).addClass('done');
+
+                                    $.post("http://todo-list.ru/ajax/", str, function (data) {
+                                        if (data.Data == true) {
+                                            $(this).prop('disabled', true);
+                                        }
+                                    });
+
+                                }
+                            });
+                        
                     }
                 });
 
