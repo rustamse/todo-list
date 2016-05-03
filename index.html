@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="static/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-2.2.3.js"></script>
+    <title>To-do list</title>
+    <style>
+        input:checked + label {
+            text-decoration: line-through;
+            color: lightgray;
+        }
+
+        .addSubtask {
+            visibility: hidden;
+        }
+
+        li:hover .addSubtask {
+            visibility: visible;
+        }
+
+        li.done:hover .addSubtask {
+            visibility: hidden;
+        }
+
+        li:hover {
+            background: #eee;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="jumbotron">
+        <div class="container">
+            <div class="row row-header">
+                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                    <img src="static/logo.png" class="img-responsive" alt="To-do list logo">
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-8 col-lg-9">
+                    <h2>Иерархичный to-do list</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row row-content">
+            <div class="col-xs-12">
+                <h3>Список задач:</h3>
+            </div>
+            <div class="col-xs-12">
+                <ul class="list-unstyled" id="tasks-ul" name="tasks-ul">
+                    {% load subtasks %} {% for task in tasks %} {% get_task_children task %} {% endfor %}
+                </ul>
+            </div>
+
+            <div class="col-xs-12 col-sm-9">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="taskdescr" id="taskdescr" placeholder="Введите описание задачи...">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary add-btn" type="button" name="add-btn">Добавить новую задачу</button>
+                    </span>
+                </div>
+            </div>
+
+            <p class="col-xs-12">Examples of checkboxes: </p>
+
+            <div class="col-xs-12">
+                <ul class="list-unstyled col-xs-12">
+                    <li>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="7676" checked disabled>checked disabled example
+                            </label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="7677">simple example
+                            </label>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".add-btn").click(function () {
+                var parent = $(this).closest('li');
+                var descr = "";
+                var parent_id = null;
+                var parent_element = $("#tasks-ul");
+
+                if (parent.length != 0) {
+                    descr = parent.find(".taskdescr").val();
+                    parent_id = parent.attr('data-task-id');
+                    parent_element = parent.find('ul');
+                }
+                else {
+                    descr = $('#taskdescr').val();
+                }
+
+                if (!descr || !descr.trim()) {
+                    alert("Нельзя добавить задачу без описания!");
+                    return;
+                }
+
+                var str = '{"Method": "Add", "Param": { "task_title": "' + descr + '", "parent": ' + parent_id + ' } }';
+
+
+
+                $.post("http://todo-list.ru/ajax/", str, function (data) {
+                    if (data.Data !== null && data.Data.task_id !== null) {
+                        var tid = data.Data.task_id;
+                        parent_element.append('<li data-task-id="' + tid + '"><div class="checkbox"><label><input type="checkbox" id="' + tid + '">' + descr + '</label></div></li>');
+                    }
+                });
+
+            });
+
+            $('input[type=checkbox]').click(function () {
+                if ($(this).is(':checked')) {
+                    $(this).prop('disabled', true);
+
+                    var str = '{"Method": "Check", "Param": { "task_id": "' + this.id + '" } }';
+
+                    $($(this).closest('li')[0]).addClass('done');
+
+                    $.post("http://todo-list.ru/ajax/", str, function (data) {
+                        if (data.Data == true) {
+                            $(this).prop('disabled', true);
+                        }
+                    });
+
+                }
+            });
+
+        });
+    </script>
+</body>
+
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function (d, w, c) {
+        (w[c] = w[c] || []).push(function () {
+            try {
+                w.yaCounter36844290 = new Ya.Metrika({
+                    id: 36844290,
+                    clickmap: true,
+                    trackLinks: true,
+                    accurateTrackBounce: true
+                });
+            } catch (e) {}
+        });
+
+        var n = d.getElementsByTagName("script")[0],
+            s = d.createElement("script"),
+            f = function () {
+                n.parentNode.insertBefore(s, n);
+            };
+        s.type = "text/javascript";
+        s.async = true;
+        s.src = "https://mc.yandex.ru/metrika/watch.js";
+
+        if (w.opera == "[object Opera]") {
+            d.addEventListener("DOMContentLoaded", f, false);
+        } else {
+            f();
+        }
+    })(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript data-brackets-id='8053'>
+    <div data-brackets-id='8054'><img data-brackets-id='8055' src="https://mc.yandex.ru/watch/36844290" style="position:absolute; left:-9999px;" alt="" /></div>
+</noscript>
+<!-- /Yandex.Metrika counter -->
+
+</html>
