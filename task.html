@@ -7,7 +7,7 @@
             </div>
 
             <div class="input-group col-xs-6 addSubtask">
-                <input maxlength="400" type="text" class="form-control taskdescr" name="taskdescr" placeholder="Введите описание подзадачи...">
+                <input maxlength="400" type="text" class="form-control taskdescr" name="taskdescr" placeholder="Описание подзадачи...">
                 <span class="input-group-btn">
                     <button class="btn btn-primary add-btn" type="button" name="add-btn">Добавить подзадачу</button>
                 </span>
@@ -15,7 +15,7 @@
             <ul class="list-unstyled">
                 {% for subtask in list %}
                 <li>
-                    <div class="checkbox">
+                    <div class="checkbox subcheckbox">
                         <label>
                             <input maxlength="400" type="checkbox" id="{{ subtask.id }}" {% if subtask.done %}checked disabled {% endif %}>
                             <label>{{ subtask.title }}</label>
