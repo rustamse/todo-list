@@ -5,18 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="shortcut icon" href="favicon.ico">
-    <link href="static/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-2.2.3.js"></script>
-    <script src="static/bootstrap.js"></script>
-    <title>To-do list</title>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <title>Иерархичный список задач</title>
     <style>
         input:checked + label {
             text-decoration: line-through;
             color: lightgray;
-        }
-        
-        .addSubtask {
-            visibility: hidden;
         }
         
         li:hover .addSubtask {
@@ -28,15 +24,35 @@
         }
         
         li:hover {
-            color: blue;
+            color: #1580ff;
         }
 
         div.templates {
             display: none;
         }
         
+        input[readonly] {
+            background-color: #fff !important; 
+        }
+        
+        .addSubtask {
+            visibility: hidden;
+        }        
+
         .subcheckbox {
             margin: 0px 20px 15px 40px;
+        }
+        
+        .smallLeftMargin {
+            margin: 0px 0px 0px 10px;
+        }
+        
+        .bigRightMargin {
+            margin: 0px 40px 0px 0px;
+        }
+                
+        .brandColor {
+            color: #1580ff;
         }
         
     </style>
@@ -45,12 +61,32 @@
 <body>
     <div class="jumbotron">
         <div class="container">
-            <div class="row row-header">
-                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                    <img src="static/logo.png" class="img-responsive" width="128" alt="To-do list logo">
+            <div class="row row-header">                
+                <div class="col-sm-3 col-md-2">
+                    <img src="static/logo.png" class="img-responsive" alt="To-do list logo">
                 </div>
-                <div class="col-xs-12 col-sm-6 col-md-8 col-lg-9">
-                    <h2>Иерархичный список задач</h2>
+                <div class="col-sm-9 col-md-10">
+                    <h3 style="color: #1580ff;" >Иерархичный список задач</h3>
+                    <div>
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="copyToClipInput" value="http://todo-list.ru/b0ac2a51-3408-43b4-9ac5-c3af0101ab93" readonly >
+                                    <span class="input-group-btn" >
+                                        <button type="button" class="btn btn-success bigRightMargin" id="copyToClipButton" aria-label="Shared Link" data-toggle="tooltip" data-placement="bottom" title="Скопировать ссылку в буфер обмена" onclick="shareClick();">
+                                            <span class="glyphicon glyphicon-link" aria-hidden="true"></span><span class="smallLeftMargin">Поделиться списком</span>
+                                        </button>
+                                    </span>
+                                </div>
+                                
+                                <button type="button" class="btn btn-primary" id="newListButton" aria-label="New List" data-toggle="tooltip" data-placement="bottom" title="Открыть новый список задач" onclick="newListClick();">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span><span class="smallLeftMargin">Новый список</span>
+                                </button>
+                            </div>                            
+                        </form>
+                        
+                        
+                    </div>                    
                 </div>
             </div>
         </div>
@@ -78,7 +114,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <br>
-                <p class="text-center">Сайт изготовлен командой "Иерархичный to-do list"</p>
+                <p class="text-center brandColor">Сайт изготовлен командой "Иерархичный to-do list"</p>
             </div>
         </div>
     </div>
@@ -218,6 +254,81 @@
 
             $('input[type=checkbox]').click(doneTask);
         });
+        
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
+        
+        function shareClick() {
+            copyToClipboard(document.getElementById("copyToClipInput"));
+        };
+        
+        function newListClick() {
+            var uuid = generateUUID();
+            var newLocation = 'http://todo-list.ru/' + uuid;
+            window.location.href = newLocation;
+        };        
+        
+        function copyToClipboard(elem) {
+            // create hidden text element, if it doesn't already exist
+            var targetId = "_hiddenCopyText_";
+            var isInput = elem.tagName === "INPUT" || elem.tagName === "TEXTAREA";
+            var origSelectionStart, origSelectionEnd;
+            if (isInput) {
+                // can just use the original source element for the selection and copy
+                target = elem;
+                origSelectionStart = elem.selectionStart;
+                origSelectionEnd = elem.selectionEnd;
+            } else {
+                // must use a temporary form element for the selection and copy
+                target = document.getElementById(targetId);
+                if (!target) {
+                    var target = document.createElement("textarea");
+                    target.style.position = "absolute";
+                    target.style.left = "-9999px";
+                    target.style.top = "0";
+                    target.id = targetId;
+                    document.body.appendChild(target);
+                }
+                target.textContent = elem.textContent;
+            }
+            // select the content
+            var currentFocus = document.activeElement;
+            target.focus();
+            target.setSelectionRange(0, target.value.length);
+
+            // copy the selection
+            var succeed;
+            try {
+                  succeed = document.execCommand("copy");
+            } catch(e) {
+                succeed = false;
+            }
+            // restore original focus
+            //if (currentFocus && typeof currentFocus.focus === "function") {
+            //    currentFocus.focus();
+            //}
+
+            //if (isInput) {
+            //    // restore prior selection
+            //    elem.setSelectionRange(origSelectionStart, origSelectionEnd);
+            //} else {
+            //    // clear temporary content
+            //    target.textContent = "";
+            //}
+            return succeed;
+        };
+        
+        function generateUUID() {
+            var d = new Date().getTime();
+            var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = (d + Math.random()*16)%16 | 0;
+                d = Math.floor(d/16);
+                return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+            });
+            return uuid;
+        };
+        
     </script>
 </body>
 
