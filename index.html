@@ -176,7 +176,7 @@
                         el.click(function () {
                             if ($(this).is(':checked')) {
                                 $(this).prop('disabled', true);
-
+                                                            
                                 var str = '{"Method": "Check", "Param": { "task_id": "' + this.id + '" } }';
 
                                 $($(this).closest('li')[0]).addClass('done');
@@ -199,7 +199,11 @@
 
                     var str = '{"Method": "Check", "Param": { "task_id": "' + this.id + '" } }';
 
-                    $($(this).closest('li')[0]).addClass('done');
+                    var doneCheckbox = $($(this).closest('li')[0]);
+                    doneCheckbox.addClass('done');
+                    
+                    doneCheckbox.find('input[type=checkbox]').prop('checked', true);
+                    doneCheckbox.find('input[type=checkbox]').prop('disabled', true);
 
                     $.post("http://todo-list.ru/ajax/", str, function (data) {
                         if (data.Data == true) {
