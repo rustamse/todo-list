@@ -4,13 +4,16 @@ $(document).ready(function () {
         var descr = "";
         var parent_id = null;
         var parent_element = $("#tasks-ul");
+        var descr_element = null;
 
         if (parent.length != 0) {
             descr = parent.find(".taskdescr").val();
+            descr_element = parent.find(".taskdescr");
             parent_id = parent.attr('data-task-id');
             parent_element = parent.find('ul');
         } else {
             descr = $('#taskdescr').val();
+            descr_element = $('#taskdescr');
         }
 
         if (!descr || !descr.trim()) {
@@ -24,6 +27,7 @@ $(document).ready(function () {
 
         $.post("http://todo-list.ru/ajax/", str, function (data) {
             if (data.Data !== null && data.Data.task_id !== null) {
+                descr_element.val("");
                 var tid = data.Data.task_id;
                 var li = undefined;
 
