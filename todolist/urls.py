@@ -11,4 +11,5 @@ urlpatterns = patterns('',
     url(r'^$', index),
     url(r'^ajax/', ajax),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^(?P<uid>\w{8}-\w{4}-\w{4}-\w{4}-\w{12})', list)
 )

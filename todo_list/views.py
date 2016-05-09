@@ -1,15 +1,33 @@
 # -*- coding: utf-8 -*-
 
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from todo_list.models import *
 import json
+import uuid
+from datetime import datetime, timedelta
 
 
 def index(request):
-    tasks = Task.objects.filter(parent=None)
+    list = request.COOKIES.get('list')
 
-    return render(request, 'index.html', {'tasks': tasks})
+    response = HttpResponseRedirect(list)
+
+    if (not list):
+        list = uuid.uid()
+        response = HttpResponseRedirect(list)
+        response.set_cookie('list', value=list, expires=(timedelta(days=182) + datetime.today()), domain=ADDRESS['domain'])
+
+    return response
+
+def list(request, uid):
+    tasks = Task.objects.filter(parent=None, list=uid)
+
+    responce = render(request, 'index.html', {'tasks': tasks})
+
+    responce.set_cookie('list', value=uid, expires=(timedelta(days=182) + datetime.today()), domain=ADDRESS['domain'])
+
+    return responce
 
 
 def error(text):
@@ -56,9 +74,15 @@ def ajax(request):
             except Exception:
                 return error('parent missed')
 
+            list = request.COOKIES.get('list')
+
+            if (not list):
+                return error('List not selected')
+
             task = Task()
             task.title = task_title
             task.parent = parent
+            task.list = list
             task.save()
 
             return rsp({'task_id': task.id, 'parent': parent_id})
@@ -75,6 +99,12 @@ def ajax(request):
 
             task.done = True
             task.save()
+
+            subtasks = Task.objects.filter(parent=task)
+
+            for subtask in subtasks:
+                subtask.done = True
+                subtask.save()
 
             return rsp(True)
         else:
