@@ -14,7 +14,7 @@ def index(request):
     response = HttpResponseRedirect(list)
 
     if (not list):
-        list = uuid.uid4()
+        list = uuid.uuid4()
         response = HttpResponseRedirect(list)
         response.set_cookie('list', value=list, expires=(timedelta(days=182) + datetime.today()), domain=ADDRESS['domain'])
 
