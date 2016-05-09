@@ -16,7 +16,7 @@ def index(request):
     if (not list):
         list = uuid.uuid4()
         response = HttpResponseRedirect(list)
-        response.set_cookie('list', value=list, expires=(timedelta(days=182) + datetime.today()), domain=ADDRESS['domain'])
+        response.set_cookie('list', value=list, expires=(timedelta(days=182) + datetime.today()))
 
     return response
 
@@ -25,7 +25,7 @@ def list(request, uid):
 
     responce = render(request, 'index.html', {'tasks': tasks})
 
-    responce.set_cookie('list', value=uid, expires=(timedelta(days=182) + datetime.today()), domain=ADDRESS['domain'])
+    responce.set_cookie('list', value=uid, expires=(timedelta(days=182) + datetime.today()))
 
     return responce
 
