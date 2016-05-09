@@ -1,0 +1,44 @@
+input:checked + label {
+    text-decoration: line-through;
+    color: lightgray;
+}
+
+li:hover .addSubtask {
+    visibility: visible;
+}
+
+li.done:hover .addSubtask {
+    visibility: hidden;
+}
+
+li:hover {
+    color: #1580ff;
+}
+
+div.templates {
+    display: none;
+}
+
+input[readonly] {
+    background-color: #fff !important;
+}
+
+.addSubtask {
+    visibility: hidden;
+}
+
+.subcheckbox {
+    margin: 0 20px 15px 40px;
+}
+
+.smallLeftMargin {
+    margin-bottom: 10px;
+}
+
+.bigRightMargin {
+    margin-right: 40px;
+}
+
+.brandColor {
+    color: #1580ff;
+}
