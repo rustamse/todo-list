@@ -54,22 +54,7 @@ $(document).ready(function () {
                 parent_element.append(li);
 
                 var el = $('#' + tid);
-                el.click(function () {
-                    if ($(this).is(':checked')) {
-                        $(this).prop('disabled', true);
-
-                        var str = '{"Method": "Check", "Param": { "task_id": "' + this.id + '" } }';
-
-                        $($(this).closest('li')[0]).addClass('done');
-
-                        $.post("http://todo-list.ru/ajax/", str, function (data) {
-                            if (data.Data == true) {
-                                $(this).prop('disabled', true);
-                            }
-                        });
-
-                    }
-                });
+                el.click(doneTask);
             }
         });
     };
