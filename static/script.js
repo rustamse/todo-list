@@ -39,7 +39,6 @@ $(document).ready(function () {
                     li.find('.taskCheckbox')[0].id = tid;
                     li.find('.taskTitle').text(descr);
 
-                    li.find('.taskCheckbox').click(doneTask);
                     li.find(".add-btn").click(addTask);
 
                 } else {
@@ -48,13 +47,12 @@ $(document).ready(function () {
 
                     li.find('.taskCheckbox')[0].id = tid;
                     li.find('.taskTitle').text(descr);
-
                 }
 
-                parent_element.append(li);
+                li.find('.taskCheckbox').click(doneTask);
+                li.find(".new_task_description").keypress(checkKeyPress);
 
-                var el = $('#' + tid);
-                el.click(doneTask);
+                parent_element.append(li);
             }
         });
     };
@@ -79,15 +77,17 @@ $(document).ready(function () {
         }
     };
 
-    $(".add-btn").click(addTask);
-
-    $(".new_task_description").keypress(function(e) {
+    var checkKeyPress = function(e) {
         if (e.keyCode == 13) {
             addTask.call(this);
         }
-    });
+    };
 
-    $('input[type=checkbox]').click(doneTask);
+    $(".add-btn").click(addTask);
+
+    $(".new_task_description").keypress(checkKeyPress);
+
+    $('.taskCheckbox').click(doneTask);
 });
 
 $(function () {
