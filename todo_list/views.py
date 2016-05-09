@@ -23,7 +23,7 @@ def index(request):
 def list(request, uid):
     tasks = Task.objects.filter(parent=None, list=uid)
 
-    responce = render(request, 'index.html', {'tasks': tasks})
+    responce = render(request, 'index.html', {'tasks': tasks, 'list': uid})
 
     responce.set_cookie('list', value=uid, expires=(timedelta(days=182) + datetime.today()))
 
