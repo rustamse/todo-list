@@ -87,11 +87,16 @@ $(document).ready(function () {
                     $(this).prop('disabled', true);
                 }
             });
-
         }
     };
 
     $(".add-btn").click(addTask);
+
+    $(".new_task_description").keypress(function(e) {
+        if (e.keyCode == 13) {
+            addTask.call(this);
+        }
+    });
 
     $('input[type=checkbox]').click(doneTask);
 });
